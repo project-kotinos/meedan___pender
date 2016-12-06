@@ -30,3 +30,6 @@ gem 'postrank-uri'
 gem 'retryable'
 gem 'puma'
 gem "smartshot"
+gem 'sidekiq', '~> 4.0'
+gem "sidekiq-cron", "~> 0.4.0"
+gem 'sidekiq-uniq', '~> 0.8.0'
