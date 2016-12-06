@@ -1,0 +1,1 @@
+require 'pender_worker'

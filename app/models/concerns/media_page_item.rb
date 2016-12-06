@@ -2,6 +2,7 @@ module MediaPageItem
   extend ActiveSupport::Concern
 
   included do
+    include Sidekiq::Worker
     Media.declare('page_item', [/^.*$/])
   end
 
@@ -12,10 +13,12 @@ module MediaPageItem
     end
 
     if self.data[:picture].blank?
-      generate_screenshot
+      data[:picture] = take_screenshot(self.request.base_url, self.url, self.get_id)
     else
       self.data[:picture] = self.add_scheme(self.data[:picture])
     end
+
+    PenderWorker.new.perform(self.request.base_url, self.url, self.get_id)
   end
 
   def page_get_data_from_url
@@ -67,13 +70,4 @@ module MediaPageItem
     data
   end
 
-  def generate_screenshot
-    base_url = self.request.base_url
-    path = self.url.parameterize + '.png'
-    output_file = File.join(Rails.root, 'public', 'screenshots', path)
-    fetcher = Smartshot::Screenshot.new(window_size: [800, 600])
-    if fetcher.take_screenshot! url: self.url, output: output_file, wait_for_element: ['body'], sleep: 10, frames_path: []
-      data[:picture] = URI.join(base_url, 'screenshots/', path).to_s
-    end
-  end
 end
