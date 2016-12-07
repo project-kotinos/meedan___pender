@@ -3,6 +3,8 @@ module MediaPageItem
 
   included do
     include Sidekiq::Worker
+    include MediasHelper
+    require 'pender_worker'
     Media.declare('page_item', [/^.*$/])
   end
 
@@ -11,14 +13,11 @@ module MediaPageItem
     handle_exceptions(RuntimeError) do
       self.data = self.page_get_data_from_url
     end
-
     if self.data[:picture].blank?
       data[:picture] = take_screenshot(self.request.base_url, self.url, self.get_id)
     else
       self.data[:picture] = self.add_scheme(self.data[:picture])
     end
-
-    PenderWorker.new.perform(self.request.base_url, self.url, self.get_id)
   end
 
   def page_get_data_from_url

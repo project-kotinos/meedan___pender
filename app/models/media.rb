@@ -1,3 +1,5 @@
+require 'pender_worker'
+
 class Media
   include ActiveModel::Validations
   include ActiveModel::Conversion

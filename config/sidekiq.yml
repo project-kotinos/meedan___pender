@@ -1,0 +1,13 @@
+---
+:concurrency: 5
+:logfile: log/sidekiq.log
+:redis_host: '127.0.0.1'
+:redis_port: 6379
+:queues:
+  - default
+  - [high, 7]
+  - [average, 5]
+  - [low, 3]
+  - [lowest, 1]
+:web_user: meedan
+:web_password: m33d4n.12

@@ -6,4 +6,8 @@ Rails.application.routes.draw do
       resources :medias, only: [:index]
     end
   end
+
+  require 'sidekiq/web'
+  require 'sidekiq/cron/web'
+  mount Sidekiq::Web, at:'/sidekiq'
 end
