@@ -19,6 +19,19 @@ module MediasDoc
       response 408, 'Timeout', { query: { url: url }, headers: authed }
       response 429, 'API limit reached', { query: { url: url }, headers: authed }
     end
+
+    swagger_api :screenshots do
+      summary 'Get the screenshots for a given URL'
+      notes 'Get the page screenshots for a given URL'
+      param :query, :url, :string, :required, 'URL to get the screenshots'
+      authed = { CONFIG['authorization_header'] => 'test' }
+      url = 'https://www.youtube.com/user/MeedanTube'
+      response :ok, 'Parsed data', { query: { url: url }, headers: authed }
+      response 400, 'URL not provided', { query: { url: nil }, headers: authed }
+      response 401, 'Access denied', { query: { url: url } }
+      response 408, 'Timeout', { query: { url: url }, headers: authed }
+    end
+
   end
 end
 # :nocov:

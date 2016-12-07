@@ -5,7 +5,7 @@
   "resourcePath": "medias",
   "apis": [
     {
-      "path": "api/medias",
+      "path": "api/medias/index",
       "operations": [
         {
           "summary": "Get the metadata for a given URL",
@@ -87,6 +87,73 @@
           ],
           "method": "get",
           "nickname": "Api::V1::Medias#index"
+        }
+      ]
+    },
+    {
+      "path": "api/medias/screenshots",
+      "operations": [
+        {
+          "summary": "Get the screenshots for a given URL",
+          "notes": "Get the page screenshots for a given URL",
+          "parameters": [
+            {
+              "paramType": "query",
+              "name": "url",
+              "type": "string",
+              "description": "URL to get the screenshots",
+              "required": true
+            }
+          ],
+          "responseMessages": [
+            {
+              "code": 200,
+              "responseModel": {
+                "query": {
+                  "url": "https://www.youtube.com/user/MeedanTube"
+                },
+                "headers": {
+                  "x-Pender-Token": "test"
+                }
+              },
+              "message": "Parsed data"
+            },
+            {
+              "code": 400,
+              "responseModel": {
+                "query": {
+                  "url": null
+                },
+                "headers": {
+                  "x-Pender-Token": "test"
+                }
+              },
+              "message": "URL not provided"
+            },
+            {
+              "code": 401,
+              "responseModel": {
+                "query": {
+                  "url": "https://www.youtube.com/user/MeedanTube"
+                }
+              },
+              "message": "Access denied"
+            },
+            {
+              "code": 408,
+              "responseModel": {
+                "query": {
+                  "url": "https://www.youtube.com/user/MeedanTube"
+                },
+                "headers": {
+                  "x-Pender-Token": "test"
+                }
+              },
+              "message": "Timeout"
+            }
+          ],
+          "method": "get",
+          "nickname": "Api::V1::Medias#screenshots"
         }
       ]
     }

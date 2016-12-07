@@ -28,6 +28,24 @@ module Api
         %w(html js json oembed)
       end
 
+      def screenshots
+        @request = request
+        @url = params[:url]
+        (render_parameters_missing and return) if @url.blank?
+        @id = Digest::MD5.hexdigest(@url) # Needs to follow redirections and normalize url
+        folder = File.join(Rails.root, 'public', 'screenshots', @id)
+        filenames = Dir.entries(folder).select {|x| File.extname(x) == '.png'}
+        @files = []
+        filenames.each do |file|
+          @files << URI.join(@request.base_url, 'screenshots/', "#{@id}/#{file}").to_s
+        end
+        @files.sort!
+        respond_to do |format|
+          format.json  { render json: @files }
+          format.html  { render template: 'medias/screenshots' }
+        end
+      end
+
       private
 
       def allow_iframe
