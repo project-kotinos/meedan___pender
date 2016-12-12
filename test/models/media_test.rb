@@ -119,7 +119,9 @@ class MediaTest < ActiveSupport::TestCase
   end
 
   test "should parse Checkdesk report" do
-    m = create_media url: 'https://meedan.checkdesk.org/node/2161'
+    request = 'http://localhost'
+    request.expects(:base_url).returns('http://localhost')
+    m = create_media url: 'https://meedan.checkdesk.org/node/2161', request: request
     data = m.as_json
     assert_equal 'Twitter / History In Pictures: Little Girl &amp; Ba...', data['title']
     assert_equal 'Tom', data['username']
@@ -237,7 +239,7 @@ class MediaTest < ActiveSupport::TestCase
 
   test "should follow redirection of relative paths" do
     request = 'http://localhost'
-    request.expects(:base_url).returns('http://localhost')
+    request.stubs(:base_url).returns('http://localhost')
     assert_nothing_raised do
       m = create_media url: 'http://www.almasryalyoum.com/node/517699', request: request
       data = m.as_json
@@ -246,7 +248,9 @@ class MediaTest < ActiveSupport::TestCase
   end
 
   test "should parse HTTP-authed URL" do
-    m = create_media url: 'http://qa.checkdesk.org/en/source/2777'
+    request = 'http://localhost'
+    request.stubs(:base_url).returns('http://localhost')
+    m = create_media url: 'http://qa.checkdesk.org/en/source/2777', request: request
     data = m.as_json
     assert_equal 'Western Sahara AF', data['title']
   end
@@ -553,7 +557,9 @@ class MediaTest < ActiveSupport::TestCase
   end
 
   test "should parse twitter metatags" do
-    m = create_media url: 'https://www.flickr.com/photos/bees/2341623661'
+    request = 'http://localhost'
+    request.expects(:base_url).returns('http://localhost')
+    m = create_media url: 'https://www.flickr.com/photos/bees/2341623661', request: request
     d = m.as_json
     assert_equal 'ZB8T0193', d['title']
     assert_match /Explore .* photos on Flickr!/, d['description']
@@ -563,7 +569,9 @@ class MediaTest < ActiveSupport::TestCase
   end
 
   test "should parse opengraph metatags" do
-    m = create_media url: 'http://hacktoon.com/nerdson/2016/poker-planning'
+    request = 'http://localhost'
+    request.expects(:base_url).returns('http://localhost')
+    m = create_media url: 'http://hacktoon.com/nerdson/2016/poker-planning', request: request
     d = m.as_json
     assert_equal 'Poker planning - Hacktoon!', d['title']
     assert_equal 'Programming comics and digital culture', d['description']
@@ -575,7 +583,7 @@ class MediaTest < ActiveSupport::TestCase
 
   test "should parse meta tags as fallback" do
     request = 'http://localhost'
-    request.expects(:base_url).returns('http://localhost')
+    request.stubs(:base_url).returns('http://localhost')
     m = create_media url: 'https://xkcd.com/1479', request: request
     d = m.as_json
     assert_equal 'xkcd: Troubleshooting', d['title']
@@ -591,7 +599,7 @@ class MediaTest < ActiveSupport::TestCase
 
   test "should parse meta tags as fallback 2" do
     request = 'http://localhost'
-    request.expects(:base_url).returns('http://localhost')
+    request.stubs(:base_url).returns('http://localhost')
     m = create_media url: 'http://ca.ios.ba/', request: request
     d = m.as_json
     assert_equal 'CaioSBA', d['title']
@@ -617,7 +625,9 @@ class MediaTest < ActiveSupport::TestCase
   end
 
   test "should not overwrite metatags with nil" do
-    m = create_media url: 'https://meedan.checkdesk.org/node/2161'
+    request = 'http://localhost'
+    request.expects(:base_url).returns('http://localhost')
+    m = create_media url: 'https://meedan.checkdesk.org/node/2161', request: request
     m.expects(:get_opengraph_metadata).returns({author_url: nil})
     m.expects(:get_twitter_metadata).returns({author_url: nil})
     m.expects(:get_oembed_metadata).returns({})
@@ -676,7 +686,9 @@ class MediaTest < ActiveSupport::TestCase
   end
 
   test "should return success to any valid link" do
-    m = create_media url: 'https://www.reddit.com/r/Art/comments/58a8kp/emotions_language_youngjoo_namgung_ai_livesurface/'
+    request = 'http://localhost'
+    request.expects(:base_url).returns('http://localhost')
+    m = create_media url: 'https://www.reddit.com/r/Art/comments/58a8kp/emotions_language_youngjoo_namgung_ai_livesurface/', request: request
     d = m.as_json
     assert_match /emotion's language, Youngjoo Namgung/, d['title']
     assert_match /.* points and .* comments so far on reddit/, d['description']
@@ -687,7 +699,9 @@ class MediaTest < ActiveSupport::TestCase
   end
 
   test "should return success to any valid link 2" do
-    m = create_media url: 'http://www.youm7.com/story/2016/7/6/بالصور-مياه-الشرب-بالإسماعيلية-تواصل-عملها-لحل-مشكلة-طفح-الصرف/2790125'
+    request = 'http://localhost'
+    request.expects(:base_url).returns('http://localhost')
+    m = create_media url: 'http://www.youm7.com/story/2016/7/6/بالصور-مياه-الشرب-بالإسماعيلية-تواصل-عملها-لحل-مشكلة-طفح-الصرف/2790125', request: request
     d = m.as_json
     assert_equal 'بالصور.. مياه الشرب بالإسماعيلية تواصل عملها لحل مشكلة طفح الصرف ببعض الشوارع - اليوم السابع', d['title']
     assert_match /واصلت غرفة عمليات شركة/, d['description']
@@ -699,7 +713,7 @@ class MediaTest < ActiveSupport::TestCase
 
   test "should not store the picture address if it was not taken" do
     request = 'http://localhost'
-    request.expects(:base_url).returns('http://localhost')
+    request.stubs(:base_url).returns('http://localhost')
     Smartshot::Screenshot.any_instance.stubs(:take_screenshot!).returns(false)
     m = create_media url: 'http://xkcd.com/448/', request: request
     d = m.as_json
@@ -713,7 +727,9 @@ class MediaTest < ActiveSupport::TestCase
   end
 
   test "should get relative canonical URL parsed from html tags" do
-    m = create_media url: 'http://meedan.com'
+    request = 'http://localhost'
+    request.expects(:base_url).returns('http://localhost')
+    m = create_media url: 'http://meedan.com', request: request
     d = m.as_json
     assert_equal 'https://meedan.com/en/', m.url
     assert_equal 'Meedan', d['title']
@@ -886,7 +902,9 @@ class MediaTest < ActiveSupport::TestCase
   end
 
   test "should parse url with arabic chars" do
-    m = create_media url: 'http://www.aljazeera.net/news/arabic/2016/10/19/تحذيرات-أممية-من-احتمال-نزوح-مليون-مدني-من-الموصل'
+    request = 'http://localhost'
+    request.expects(:base_url).returns('http://localhost')
+    m = create_media url: 'http://www.aljazeera.net/news/arabic/2016/10/19/تحذيرات-أممية-من-احتمال-نزوح-مليون-مدني-من-الموصل', request: request
     d = m.as_json
     assert_equal 'تحذيرات أممية من احتمال نزوح مليون مدني من الموصل', d['title']
     assert_equal 'عبرت الأمم المتحدة عن قلقها البالغ على سلامة 1.5 مليون شخص بالموصل، محذرة من احتمال نزوح مليون منهم، وقالت إن أكثر من 900 نازح فروا إلى سوريا بأول موجة نزوح.', d['description']
@@ -899,7 +917,7 @@ class MediaTest < ActiveSupport::TestCase
   test "should parse url with already encoded chars" do
     request = 'http://localhost'
     request.expects(:base_url).returns('http://localhost')
-    m = create_media url: 'http://www.aljazeera.net/news/arabic/2016/10/19/%D8%AA%D8%AD%D8%B0%D9%8A%D8%B1%D8%A7%D8%AA-%D8%A3%D9%85%D9%85%D9%8A%D8%A9-%D9%85%D9%86-%D8%A7%D8%AD%D8%AA%D9%85%D8%A7%D9%84-%D9%86%D8%B2%D9%88%D8%AD-%D9%85%D9%84%D9%8A%D9%88%D9%86-%D9%85%D8%AF%D9%86%D9%8A-%D9%85%D9%86-%D8%A7%D9%84%D9%85%D9%88%D8%B5%D9%84'
+    m = create_media url: 'http://www.aljazeera.net/news/arabic/2016/10/19/%D8%AA%D8%AD%D8%B0%D9%8A%D8%B1%D8%A7%D8%AA-%D8%A3%D9%85%D9%85%D9%8A%D8%A9-%D9%85%D9%86-%D8%A7%D8%AD%D8%AA%D9%85%D8%A7%D9%84-%D9%86%D8%B2%D9%88%D8%AD-%D9%85%D9%84%D9%8A%D9%88%D9%86-%D9%85%D8%AF%D9%86%D9%8A-%D9%85%D9%86-%D8%A7%D9%84%D9%85%D9%88%D8%B5%D9%84', request: request
     d = m.as_json
     assert_equal 'تحذيرات أممية من احتمال نزوح مليون مدني من الموصل', d['title']
     assert_equal 'عبرت الأمم المتحدة عن قلقها البالغ على سلامة 1.5 مليون شخص بالموصل، محذرة من احتمال نزوح مليون منهم، وقالت إن أكثر من 900 نازح فروا إلى سوريا بأول موجة نزوح.', d['description']
@@ -923,7 +941,9 @@ class MediaTest < ActiveSupport::TestCase
   end
 
   test "should parse url 2" do
-    m = create_media url: 'https://www.theguardian.com/politics/2016/oct/19/larry-sanders-on-brother-bernie-and-why-tony-blair-was-destructive'
+    request = 'http://localhost'
+    request.expects(:base_url).returns('http://localhost')
+    m = create_media url: 'https://www.theguardian.com/politics/2016/oct/19/larry-sanders-on-brother-bernie-and-why-tony-blair-was-destructive', request: request
     d = m.as_json
     assert_equal 'Larry Sanders on brother Bernie and why Tony Blair was ‘destructive’', d['title']
     assert_match /The Green party candidate, who is fighting the byelection in David Cameron’s old seat/, d['description']
@@ -934,7 +954,9 @@ class MediaTest < ActiveSupport::TestCase
   end
 
   test "should parse url 3" do
-    m = create_media url: 'https://almanassa.com/ar/story/3164'
+    request = 'http://localhost'
+    request.expects(:base_url).returns('http://localhost')
+    m = create_media url: 'https://almanassa.com/ar/story/3164', request: request
     d = m.as_json
     assert_equal 'تسلسل زمني| تحرير الموصل: أسئلة الصراع الإقليمي تنتظر الإجابة.. أو الانفجار', d['title']
     assert_match /مرت الأيام التي تلت محاولة اغتيال العبادي/, d['description']

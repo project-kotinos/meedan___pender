@@ -17,12 +17,12 @@ module MediasHelper
     begin
       if fetcher.take_screenshot! url: url, output: output_file, wait_for_element: ['body'], sleep: 10, frames_path: []
         screenshot = URI.join(base_url, 'screenshots/', path).to_s
-        start_watching(base_url, url, id)
+        start_watching(base_url, url, id) if type == 'screenshot'
+        return screenshot
       end
     rescue
-      start_watching(base_url, url, id)
+      start_watching(base_url, url, id) if type == 'screenshot'
     end
-    screenshot
   end
 
   def job_name(id)

@@ -14,11 +14,11 @@ module MediaPageItem
       self.data = self.page_get_data_from_url
     end
     if self.data[:picture].blank?
-      data[:picture] = take_screenshot(self.request.base_url, self.url, self.get_id, 'picture')
+      data[:picture] = take_screenshot(self.request.base_url, self.url, self.get_id, 'picture') || ''
     else
       self.data[:picture] = self.add_scheme(self.data[:picture])
     end
-    start_watching(self.request.base_url, self.url, self.get_id)
+    take_screenshot(self.request.base_url, self.url, self.get_id)
   end
 
   def page_get_data_from_url
