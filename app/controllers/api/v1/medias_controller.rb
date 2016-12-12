@@ -32,14 +32,9 @@ module Api
         @request = request
         @url = params[:url]
         (render_parameters_missing and return) if @url.blank?
-        @id = Digest::MD5.hexdigest(@url) # Needs to follow redirections and normalize url
-        folder = File.join(Rails.root, 'public', 'screenshots', @id)
-        filenames = Dir.entries(folder).select {|x| File.extname(x) == '.png'}
-        @files = []
-        filenames.each do |file|
-          @files << URI.join(@request.base_url, 'screenshots/', "#{@id}/#{file}").to_s
-        end
-        @files.sort!
+        (render_url_invalid and return) unless valid_url?
+        render_timeout { @media = Media.new(url: @url) } and return
+        @files = list_screenshots(Digest::MD5.hexdigest(@media.url))
         respond_to do |format|
           format.json  { render json: @files }
           format.html  { render template: 'medias/screenshots' }
@@ -130,6 +125,19 @@ module Api
           Rails.logger.warn "Could not access url: #{e.message}"
           return false
         end
+      end
+
+      def list_screenshots(id)
+        files = []
+        folder = File.join(Rails.root, 'public', 'screenshots', id)
+        if Dir.exists? folder
+          filenames = Dir.entries(folder).select {|x| File.extname(x) == '.png'}
+          filenames.each do |file|
+            files << URI.join(@request.base_url, 'screenshots/', "#{id}/#{file}").to_s
+          end
+          files.sort!
+        end
+        files
       end
     end
   end

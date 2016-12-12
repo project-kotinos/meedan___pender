@@ -5,7 +5,7 @@
   "resourcePath": "medias",
   "apis": [
     {
-      "path": "api/medias/index",
+      "path": "api/medias",
       "operations": [
         {
           "summary": "Get the metadata for a given URL",

@@ -1,5 +1,5 @@
 ---
-:concurrency: 5
+:concurrency: 1
 :logfile: log/sidekiq.log
 :redis_host: '127.0.0.1'
 :redis_port: 6379

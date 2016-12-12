@@ -5,12 +5,13 @@ module MediasHelper
     "<script src=\"#{src}\" type=\"text/javascript\"></script>".html_safe
   end
 
-  # TODO Check if it's better to mantain the old address to pictures (without folder
-  #  path = self.url.parameterize + '.png'
-  #  output_file = File.join(Rails.root, 'public', 'screenshots', path)
-  def take_screenshot(base_url, url, id)
-    time = Time.now.to_formatted_s(:number)
-    path = id + '/' + time + '_' + url.parameterize + '.png'
+  def take_screenshot(base_url, url, id, type='screenshot')
+    if type == 'picture'
+      path = self.url.parameterize + '.png'
+    else
+      time = Time.now.to_formatted_s(:number)
+      path = id + '/' + time + '_' + url.parameterize + '.png'
+    end
     output_file = File.join(Rails.root, 'public', 'screenshots', path)
     fetcher = Smartshot::Screenshot.new(window_size: [800, 600])
     begin
