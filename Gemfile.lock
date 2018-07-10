@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/meedan/chromeshot
-  revision: 14ca00d176869dab436ea7f34ba02c8fc24dd13d
-  ref: 14ca00
-  branch: master
+  revision: a1d233a82af1e04f0752cdae712c2b81df61f111
+  ref: a1d233a
+  branch: feature/6615-close-or-open-chrome-if-needed
   specs:
     chromeshot (0.0.0)
       mini_magick
@@ -304,4 +304,4 @@ DEPENDENCIES
   yt (~> 0.25.5)
 
 BUNDLED WITH
-   1.16.1
+   1.16.2
